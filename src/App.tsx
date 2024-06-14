@@ -1,4 +1,4 @@
-import SignInPage from './Pages/SignInPage.tsx'
+import SignInPage from './Pages/SignInPage/SignInPage'
 
 function App() {
 
