@@ -1,5 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from "redux"
 import { thunk } from "redux-thunk"
+import type { ThunkDispatch } from 'redux-thunk'
 import { composeWithDevTools } from "@redux-devtools/extension"
 
 import { userLoginReducer } from "../reducers/userReducers/userReducers.ts"
@@ -8,15 +9,15 @@ const reducer = combineReducers({
   userLogin: userLoginReducer,
 })
 
-const userInfoFromStorage = localStorage.getItem("userInfo")
-  ? JSON.parse(localStorage.getItem("userInfo"))
-  : null
+
+const userInfoFromStorage = localStorage.getItem("userInfo");
+const parsedUserInfo = userInfoFromStorage ? JSON.parse(userInfoFromStorage) : null;
 
 const initialState = {
-  userLogin: { userInfo: userInfoFromStorage },
+  userLogin: { userInfo: parsedUserInfo },
 }
 
-const middleware: any = [thunk]
+const middleware = [thunk]
 
 const store = createStore(
   reducer,
@@ -24,4 +25,5 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(...middleware))
 )
 
-export default store
+export type AppDispatch = ThunkDispatch<typeof initialState, void, any>;
+export default store;

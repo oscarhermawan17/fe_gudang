@@ -1,8 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom"
 import { useSelector } from "react-redux"
+import { AppState } from "../../types.ts";
 
 const ProtectedPage = () => {
-  const { userInfo } = useSelector((state) => state.userLogin)
+  const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
   if (!userInfo) {
     return <Navigate to="/login" />

@@ -15,23 +15,26 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
+import type { AppDispatch } from "../../stores/store.ts"; 
 import { login } from "../../actions/userActions.ts"
 
 const defaultTheme = createTheme()
 
 export default function SignInPage() {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    })
-
-    dispatch(login(data.get("email"), data.get("password")))
+    const email = data.get("email")
+    const password = data.get("password")
+  
+    if (typeof email === "string" && typeof password === "string") {
+      dispatch(login(email, password));
+    } else {
+      console.error("Email or password is missing.");
+    }
   }
 
   function handleClick() {

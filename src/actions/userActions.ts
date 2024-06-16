@@ -1,24 +1,14 @@
+import { Dispatch } from 'redux';
+import axios from 'axios';
+
+
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAIL,
 } from "../reducers/userReducers/userConstants.ts"
 
-const fakeLoginFunction = (username: string, password: string) => {
-  return new Promise((resolve, reject) => {
-    if (username === "oscar" && password === "oscar") {
-      resolve({
-        fakeData: {
-          username: "oscar",
-          token: "testtoken",
-        },
-      })
-    }
-    reject({ message: "error" })
-  })
-}
-
-export const login = (email: string, password: string) => async (dispatch) => {
+export const login = (email: string, password: string) => async (dispatch: Dispatch) => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
@@ -30,15 +20,11 @@ export const login = (email: string, password: string) => async (dispatch) => {
       },
     }
 
-    console.log(config) // REMOVE
-
-    // const { data } = await axios.post(
-    //   `${URL}/api/users/login`,
-    //   { email, password },
-    //   config
-    // )
-
-    const { fakeData: data }: any = await fakeLoginFunction(email, password)
+    const { data } = await axios.post(
+      'https://dummyjson.com/auth/login',
+      { username: email, password },
+      config
+    )
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
@@ -47,12 +33,13 @@ export const login = (email: string, password: string) => async (dispatch) => {
 
     localStorage.setItem("userInfo", JSON.stringify(data))
   } catch (error) {
+    const err = error as { response?: { data?: { message?: string } }; message: string };
     dispatch({
       type: USER_LOGIN_FAIL,
       payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    })
+        err.response && err.response.data && err.response.data.message
+          ? err.response.data.message
+          : err.message,
+    });
   }
 }
