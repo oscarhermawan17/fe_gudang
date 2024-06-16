@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom"
 import App from "../App"
 import SignUp from "../Pages/SignUpPage/SignUpPage"
 import ErrorPage from "../Pages/ErrorPage/ErrorPage"
+import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
 import HomePage from "../Pages/HomePage/HomePage"
 import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
 
@@ -29,9 +30,14 @@ const router = createBrowserRouter([
       {
         path: "",
         element: route.element,
+        errorElement: <ErrorPage />,
       },
     ],
   })),
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
 ])
 
 export default router
