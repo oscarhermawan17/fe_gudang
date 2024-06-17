@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useEffect } from "react"
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -13,9 +13,10 @@ import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
-import type { AppDispatch } from "../../stores/store.ts"; 
+import type { AppDispatch } from "../../stores/store.ts";
+import type { UserState } from "../../reducers/userReducers/userReducers.ts"
 import { login } from "../../actions/userActions.ts"
 
 const defaultTheme = createTheme()
@@ -24,12 +25,20 @@ export default function SignInPage() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>();
 
+  const userLogin: UserState = useSelector((state: any) => state.userLogin)
+  const { userInfo } = userLogin
+
+  useEffect(() => {
+    if(userInfo) {
+      navigate("/");
+    }
+  }, [userInfo, useNavigate])
+
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
     const email = data.get("email")
     const password = data.get("password")
-  
     if (typeof email === "string" && typeof password === "string") {
       dispatch(login(email, password));
     } else {

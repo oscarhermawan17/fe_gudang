@@ -29,7 +29,7 @@ export type UserActionTypes =
   | UserLoginFailAction
   | UserLogoutAction;
 
-interface UserState {
+export type UserState = {
   loading?: boolean;
   userInfo?: any; // Replace 'any' with the actual type of your user info
   error?: any; // Replace 'any' with the actual type of your error
