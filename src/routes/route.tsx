@@ -9,16 +9,11 @@ import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
 
 // Protected Route
 const protectedRoutes = [
-  { path: "/home", element: <HomePage /> },
+  { path: "/", element: <HomePage /> },
   { path: "/protected", element: <>Protected Route</> },
 ]
 
 const router = createBrowserRouter([
-  {
-    path: "/", // Refactor this soon I
-    element: <App />,
-    errorElement: <NotFoundPage />,
-  },
   {
     path: "/login", // Refactor this soon I
     element: <App />,
