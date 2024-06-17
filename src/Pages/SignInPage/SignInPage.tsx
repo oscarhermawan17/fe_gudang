@@ -32,7 +32,7 @@ export default function SignInPage() {
     if(userInfo) {
       navigate("/");
     }
-  }, [userInfo, useNavigate])
+  }, [userInfo, navigate])
 
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
