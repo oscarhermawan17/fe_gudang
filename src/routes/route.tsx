@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom"
 
 import App from "../App"
 import SignUp from "../Pages/SignUpPage/SignUpPage"
-import ErrorPage from "../Pages/ErrorPage/ErrorPage"
-// import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
+// import ErrorPage from "../Pages/ErrorPage/ErrorPage"
+import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
 // import HomePage from "../Pages/HomePage/HomePage"
 // import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
 
@@ -17,12 +17,12 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: "/signup",
     element: <SignUp />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFoundPage />,
   },
   // ...protectedRoutes.map((route) => ({
   //   path: route.path,
