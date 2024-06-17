@@ -22,6 +22,7 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+    errorElement: <ErrorPage />,
   },
   // ...protectedRoutes.map((route) => ({
   //   path: route.path,

@@ -9,7 +9,7 @@ const ProtectedPage = () => {
     return <Navigate to="/login" />
   }
 
-  const isAuthenticated: boolean = Object.hasOwn(userInfo, "token")
+  const isAuthenticated: boolean = userInfo.hasOwnProperty("token")
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />
 }
