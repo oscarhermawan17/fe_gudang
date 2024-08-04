@@ -1,17 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useSelector } from "react-redux"
-import { AppState } from "../../types.ts";
+import useAuth from '@/hooks/useAuth/useAuth';
 
 const ProtectedPage = () => {
-  const { userInfo } = useSelector((state: AppState) => state.userLogin)
+  const { token } = useAuth();
 
-  if (!userInfo) {
-    return <Navigate to="/login" />
-  }
+  console.log('token', token)
 
-  const isAuthenticated: boolean = userInfo.hasOwnProperty("token")
-
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />
+  return token ? <Outlet /> : <Navigate to="/login" />
 }
 
 export default ProtectedPage

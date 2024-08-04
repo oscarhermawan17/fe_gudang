@@ -1,7 +1,20 @@
-import NavbarComponent from "../../Components/Navbar.component"
+import { useNavigate } from "react-router-dom"
+
+import useAuth from '@/hooks/useAuth/useAuth';
+import NavbarComponent from "@/Components/Navbar.component"
+
+
 
 function HomePage() {
-  return <NavbarComponent />
+  const { logout } = useAuth();
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login")
+  }
+
+  return <NavbarComponent logout={handleLogout}/>
 }
 
 export default HomePage

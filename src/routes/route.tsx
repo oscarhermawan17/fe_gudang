@@ -7,13 +7,20 @@ import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
 import HomePage from "../Pages/HomePage/HomePage"
 import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
 
-// Protected Route
+//Protected Route
 const protectedRoutes = [
-  { path: "/", element: <HomePage /> },
-  { path: "/protected", element: <>Protected Route</> },
+  { path: "/protected", 
+    element: "Protected"
+  },
+  {
+    path: "/", 
+    element: <HomePage />,
+    errorElement: <NotFoundPage />,
+  },
 ]
 
 const router = createBrowserRouter([
+
   {
     path: "/login", // Refactor this soon I
     element: <App />,

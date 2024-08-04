@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -13,36 +12,30 @@ import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
 
-import type { AppDispatch } from "../../stores/store.ts";
-import type { UserState } from "../../reducers/userReducers/userReducers.ts"
-import { login } from "../../actions/userActions.ts"
+import useAuth from '@/hooks/useAuth/useAuth';
 
 const defaultTheme = createTheme()
 
 export default function SignInPage() {
+  const { login } = useAuth();
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>();
 
-  const userLogin: UserState = useSelector((state: any) => state.userLogin)
-  const { userInfo } = userLogin
-
-  useEffect(() => {
-    if(userInfo) {
-      navigate("/");
-    }
-  }, [userInfo, navigate])
-
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const email = data.get("email")
-    const password = data.get("password")
-    if (typeof email === "string" && typeof password === "string") {
-      dispatch(login(email, password));
-    } else {
-      console.error("Email or password is missing.");
+    const email = data.get("email") as string
+    const password = data.get("password") as string
+    try {
+      login({ email, password})
+        .then(_ => {
+          navigate('/')
+        })
+        .catch(err => {
+          console.log('error while fetching', err)
+        })
+    } catch (err) {
+      console.log('error', err)
     }
   }
 
@@ -94,10 +87,6 @@ export default function SignInPage() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -107,11 +96,6 @@ export default function SignInPage() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
               <Grid item>
                 <Link onClick={handleClick} variant="body2">
                   {"Don't have an account? Sign Up"}
