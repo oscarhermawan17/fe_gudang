@@ -1,21 +1,31 @@
 import { createBrowserRouter } from "react-router-dom"
 
-import App from "../App"
+import MainLayout from "@/Pages/MainLayout/MainLayout"
+import SignInPage from "../Pages/SignInPage/SignInPage"
 import SignUp from "../Pages/SignUpPage/SignUpPage"
 import ErrorPage from "../Pages/ErrorPage/ErrorPage"
 import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
 import HomePage from "../Pages/HomePage/HomePage"
 import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
+import ProductPage from "@/Pages/ProductPage/ProductPage"
 
 //Protected Route
-const protectedRoutes = [
-  { path: "/protected", 
-    element: "Protected"
-  },
-  {
-    path: "/", 
-    element: <HomePage />,
-    errorElement: <NotFoundPage />,
+const protectedRoutes = [{
+    path: "/",
+    element: <ProtectedPage />,
+    children: [{
+        path: "/", 
+        element: <MainLayout />,
+        children: [{
+          path: "/",
+          element: <HomePage />
+        },
+        {
+          path: "/product", 
+          element: <ProductPage />
+        },]
+      },
+    ],
   },
 ]
 
@@ -23,7 +33,7 @@ const router = createBrowserRouter([
 
   {
     path: "/login", // Refactor this soon I
-    element: <App />,
+    element: <SignInPage />,
     errorElement: <NotFoundPage />,
   },
   {
@@ -33,14 +43,8 @@ const router = createBrowserRouter([
   },
   ...protectedRoutes.map((route) => ({
     path: route.path,
-    element: <ProtectedPage />,
-    children: [
-      {
-        path: "",
-        element: route.element,
-        errorElement: <ErrorPage />,
-      },
-    ],
+    element: route.element,
+    children: route.children
   })),
   {
     path: '*',

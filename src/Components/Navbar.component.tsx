@@ -12,11 +12,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useNavigate } from "react-router-dom"
 
-const pages = ['Products', 'Purchasing', 'Delivery', 'Sales'];
+const pages = ['Products'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function NavbarComponent({ logout }) {
+  const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -29,6 +31,7 @@ function NavbarComponent({ logout }) {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+    navigate('/product')
   };
 
   const handleCloseUserMenu = () => {
