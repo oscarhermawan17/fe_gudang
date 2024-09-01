@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    historyApiFallback: true
+    historyApiFallback: true,
+    port: Number(process.env.VITE_PORT) || 8001
   }
 })
