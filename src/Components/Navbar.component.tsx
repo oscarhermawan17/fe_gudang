@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom"
 const pages = ['Products'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function NavbarComponent({ logout }) {
+function NavbarComponent({ logout }: any) {
   const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);

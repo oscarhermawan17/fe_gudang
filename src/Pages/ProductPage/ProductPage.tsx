@@ -100,7 +100,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 export default function ProductPage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { products, error, isLoading } = useProductPage()
+  const { products } = useProductPage()
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -110,6 +110,7 @@ export default function ProductPage() {
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
+    console.log(event)
     setPage(newPage);
   };
 
@@ -144,7 +145,7 @@ export default function ProductPage() {
             {(rowsPerPage > 0
               ? products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : products
-            ).map((product) => (
+            ).map((product: any) => (
               <TableRow key={product.productId} hover>
                 <TableCell sx={{ padding: '8px' }} component="th" scope="row">
                   {product.productName}
