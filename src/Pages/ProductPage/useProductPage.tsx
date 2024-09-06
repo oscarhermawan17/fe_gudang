@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 const fetchProducts = async () => {
-  const response = await fetch('http://localhost:3007/api/products');
+  const response = await fetch(`${import.meta.env.VITE_BE_API_URL}/api/products`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

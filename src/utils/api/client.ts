@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Cookies } from 'react-cookie';
 
 export const APIClient = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API_URL || 'http://localhost:4000',
+  baseURL: import.meta.env.VITE_BE_API_URL || 'http://localhost:8000',
 });
 
 APIClient.interceptors.request.use((config) => {
