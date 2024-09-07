@@ -22,10 +22,10 @@ export default function SignInPage() {
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const email = data.get("email") as string
+    const username = data.get("username") as string
     const password = data.get("password") as string
     try {
-      login({ email, password})
+      login({ username, password})
         .then(_ => {
           navigate('/')
         })
@@ -69,10 +69,10 @@ export default function SignInPage() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username / Email Address"
+              name="username"
+              autoComplete="username"
               autoFocus
             />
             <TextField
