@@ -8,22 +8,25 @@ import NotFoundPage from "../Pages/NotFoundPage/NotFoundPage"
 import HomePage from "../Pages/HomePage/HomePage"
 import ProtectedPage from "../Pages/ProtectedPage/ProtectedPage"
 import ProductPage from "@/Pages/ProductPage/ProductPage"
+import SupplierPage from "@/Pages/SupplierPage/SupplierPage"
 
 //Protected Route
 const protectedRoutes = [{
     path: "/",
     element: <ProtectedPage />,
     children: [{
-        path: "/", 
+        path: "/",
         element: <MainLayout />,
         children: [{
           path: "/",
           element: <HomePage />
-        },
-        {
+        }, {
           path: "/product", 
           element: <ProductPage />
-        },]
+        }, {
+          path: "/supplier", 
+          element: <SupplierPage />
+        }]
       },
     ],
   },

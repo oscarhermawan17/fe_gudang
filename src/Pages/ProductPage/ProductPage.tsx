@@ -20,6 +20,72 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import AddIcon from '@mui/icons-material/Add';
+import ModalForm from '@/Components/ModalForm.component';
+
+const formsInput = [
+  {
+    label: "Barcode",
+    type: "text",
+    empty: true,
+  },{
+    label: "Size type",
+    type: "dropdown",
+    items: [{
+      value: 'A',
+      label: 'A'
+    },{
+      value: 'B',
+      label: 'B'
+    },{
+      value: 'C',
+      label: 'C'
+    }],
+    empty: false,
+  },{
+    label: "Supplier ID",
+    type: "dropdown",
+    empty: false,
+    items: [{
+      value: 'Adidas',
+      label: 'Adidas'
+    },{
+      value: 'Nike',
+      label: 'Nike'
+    },{
+      value: 'Puma',
+      label: 'Puma'
+    }],
+  },{
+    label: "Category ID",
+    type: "dropdown",
+    empty: false,
+    items: [{
+      value: 'Shirt',
+      label: 'Shirt'
+    },{
+      value: 'Hat',
+      label: 'Hat'
+    },{
+      value: 'Shoes',
+      label: 'Shoes'
+    },{
+      value: 'Ring',
+      label: 'Ring'
+    },{
+      value: 'Watch',
+      label: 'Watch'
+    },{
+      value: 'Sandals',
+      label: 'Sandals'
+    },{
+      value: 'Belt',
+      label: 'Belt'
+    },{
+      value: 'Sunglasses',
+      label: 'Sunglasses'
+    }],
+  }
+]
 
 interface TablePaginationActionsProps {
   count: number;
@@ -100,6 +166,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 export default function ProductPage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const { products } = useProductPage()
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -124,9 +193,20 @@ export default function ProductPage() {
   return (
     <Box sx={{ maxWidth: '1600px', margin: '0 auto' }}>
       <Box sx={{ padding: '16px 0px', display: 'flex',  flexDirection: 'row-reverse' }}>
-        <Button variant="contained" startIcon={<AddIcon />} color='success'>
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          startIcon={<AddIcon />}
+          color='success'
+        >
           Product
         </Button>
+        <ModalForm 
+          open={open}
+          onClose={handleClose}
+          title="Create new product"
+          formsInput={formsInput}
+        />
       </Box>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
@@ -206,6 +286,5 @@ export default function ProductPage() {
         </Table>
       </TableContainer>
     </Box>
-    
   );
 }

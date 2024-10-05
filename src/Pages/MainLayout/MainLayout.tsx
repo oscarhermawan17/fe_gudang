@@ -16,7 +16,7 @@ function MainLayout() {
     <>
       <NavbarComponent logout={handleLogout}/>
       <Outlet />
-      Footer 
+      Footer ini ada di MainLayout.tsx
     </>
   )
 }

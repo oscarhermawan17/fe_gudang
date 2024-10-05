@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from "react-router-dom"
 
-const pages = ['Products'];
+const pages = ['Product', 'Supplier'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function NavbarComponent({ logout }: any) {
@@ -29,9 +29,9 @@ function NavbarComponent({ logout }: any) {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (page: string) => {
     setAnchorElNav(null);
-    navigate('/product')
+    navigate(`/${page}`)
   };
 
   const handleCloseUserMenu = () => {
@@ -103,7 +103,7 @@ function NavbarComponent({ logout }: any) {
                     aria-haspopup="true"
                     onClick={() => null}
                   >
-                    {pages}
+                    {page}
                   </Button>
                 </MenuItem>
               ))}
@@ -132,7 +132,7 @@ function NavbarComponent({ logout }: any) {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handleCloseNavMenu(page.toLowerCase())}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
