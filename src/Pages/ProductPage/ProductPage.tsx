@@ -222,6 +222,10 @@ export default function ProductPage() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {/* {(rowsPerPage > 0
+              ? products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : products
+            ).map((product: any) => ( */}
             {(rowsPerPage > 0
               ? products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : products

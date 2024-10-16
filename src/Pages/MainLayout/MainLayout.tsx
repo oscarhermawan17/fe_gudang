@@ -38,7 +38,7 @@ function MainLayout() {
     <ThemeProvider theme={theme}>
       <NavbarComponent logout={handleLogout}/>
       <Outlet />
-      <FooterComponent />
+      {/* <FooterComponent /> */}
     </ThemeProvider>
   )
 }

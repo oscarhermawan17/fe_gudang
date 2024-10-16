@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { getProducts } from '../../utils/api/product'
+
 
 const fetchProducts = async () => {
   const response = await fetch(`${import.meta.env.VITE_BE_API_URL}/api/${import.meta.env.VITE_BE_API_VERSION}/products`);

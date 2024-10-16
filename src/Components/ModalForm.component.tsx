@@ -1,91 +1,118 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl'
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  TextField, Button, Box, FormControl, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions
+} from '@mui/material';
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
+type FormInputType = {
+  name: string;
+  label: string;
+  type: 'text' | 'dropdown';
+  required: boolean;
+  options?: Array<{ id: number; value: string; description?: string }>;
 };
 
-export default function ModalForm({ open, onClose, title, formsInput }) {
-  return (
-    <div>
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {title}
-          </Typography>
-          <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': { m: 1 },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <FormControl fullWidth>
-              {formsInput.map(formInput => {
-                if(formInput.type === 'text') {
-                  return (<TextField
-                    error={false}
-                    id="outlined-error"
-                    label={formInput.label}
-                    size="small"
-                  />)
-                } else if (formInput.type === 'dropdown') {
-                  return (
-                    <Box sx={{ margin: 1 }}>                     
-                      <Select
-                        value={""}
-                        onChange={() => null}
-                        size="small"
-                        fullWidth
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Without label' }}
-                      >
-                        <MenuItem value="">
-                          <em>Select {formInput.label}</em>
-                        </MenuItem>
-                        {formInput.items.map(item => (
-                          <>
-                            <MenuItem value={item.value}>{item.label}</MenuItem>
-                          </>
-                         ))}
-                      </Select>
-                    </Box>
-                  )
-                }
-              })}
-              <Box sx={{ margin: 1, display: 'flex', justifyContent: 'end'}}>
-                <Button
-                  onClick={() => null}
-                  variant="contained"
-                  color='success'
-                >
-                  Submit
-                </Button>
-              </Box>
-            </FormControl>
-          </Box>
-        </Box>
-      </Modal>
-    </div>
-  );
+interface ModalFormProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  formsInput: FormInputType[];
+  onSubmit: (data: { [key: string]: string }) => void;
 }
+
+// Dynamic Zod Schema based on formsInput
+const generateSchema = (formsInput: FormInputType[]) => {
+  const schemaObj: any = {};
+  
+  formsInput.forEach((input) => {
+    if (input.required) {
+      schemaObj[input.name] = z.string().min(1, `${input.name} is required`);
+    } else {
+      schemaObj[input.name] = z.string().optional();
+    }
+  });
+  
+  return z.object(schemaObj);
+};
+
+const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput, onSubmit }) => {
+  const schema = generateSchema(formsInput);
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: formsInput.reduce((acc, curr) => {
+      acc[curr.name] = '';
+      return acc;
+    }, {} as { [key: string]: string })
+  });
+
+  const onSubmitForm: SubmitHandler<{ [key: string]: string }> = (data) => {
+    onSubmit(data);
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmitForm)}>
+          <FormControl fullWidth>
+            {formsInput.map((input) => {
+              if (input.type === 'text') {
+                return (
+                  <Box key={input.name} sx={{ marginBottom: 2 }}>
+                    <TextField
+                      size={'small'}
+                      fullWidth
+                      label={input.label}
+                      {...register(input.name)}
+                      error={!!errors[input.name]}
+                      helperText={errors[input.name]?.message as string}
+                    />
+                  </Box>
+                );
+              } else if (input.type === 'dropdown' && input.options) {
+                return (
+                  <Box key={input.name} sx={{ marginBottom: 2 }}>
+                    <Select
+                      fullWidth
+                      defaultValue=""
+                      {...register(input.name)}
+                      error={!!errors[input.name]}
+                      displayEmpty
+                      size={'small'}
+                    >
+                      <MenuItem value="" disabled>
+                        Select {input.label}
+                      </MenuItem>
+                      {input.options?.map((option) => (
+                        <MenuItem key={option.id} value={option.id}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors[input.name] && (
+                      <Box color="error.main" mt={1}>
+                        {errors[input.name]?.message as string}
+                      </Box>
+                    )}
+                  </Box>
+                );
+              }
+              return null;
+            })}
+          </FormControl>
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSubmit(onSubmitForm)} variant="contained" color="primary">
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default ModalForm;
