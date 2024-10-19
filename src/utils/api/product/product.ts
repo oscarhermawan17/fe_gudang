@@ -1,11 +1,11 @@
 import { APIClient } from '../client';
 import type {  } from './product.type';
 
-export const getProducts = async () => {
+export const getProducts = async ({ page, rowsPerPage }) => {
   try {
-    const respons = await APIClient.get(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers`);
+    const response = await APIClient.get(`${import.meta.env.VITE_BE_API_URL}/api/${import.meta.env.VITE_BE_API_VERSION}/products/?page=${page+1}&page_size=${rowsPerPage}`);
 
-    return respons.data;
+    return response.data
   } catch (err) {
     console.error(err);
     throw err;

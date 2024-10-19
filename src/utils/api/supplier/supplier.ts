@@ -4,6 +4,7 @@ import type {  } from './supplier.type';
 export const getSuppliers = async ({ page, rowsPerPage }) => {
   try {
     const response = await APIClient.get(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/?page=${page+1}&page_size=${rowsPerPage}`);
+    
     return response.data
   } catch (err) {
     console.error(err);
@@ -26,7 +27,6 @@ export const deleteSuppliers = async (supplier_id) => {
   try {
     const response = await APIClient.delete(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/${supplier_id}/`);
 
-    console.log(response.data)
     return response.data
   } catch (err) {
     console.error(err);

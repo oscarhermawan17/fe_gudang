@@ -14,7 +14,7 @@ export default function SupplierPage() {
   const [open, setOpen] = React.useState(false);
 
   const { suppliers, count, error, isLoading } = useGetSuppliers({ page, rowsPerPage })
-  const { paymentTypeSuppliers, isLoading: isLoadingPaymentType } = usePaymentTypeSuppliers([])
+  const { paymentTypeSuppliers, isLoading: isLoadingPaymentType } = usePaymentTypeSuppliers()
 
   const { mutate: addSuppliers } = usePostSuppliers();
   const { mutate: deleteSuppliers } = useDeleteSuppliers();
@@ -30,7 +30,7 @@ export default function SupplierPage() {
     { name: 'pkp', label: "PKP", type: "text", required: false },
     { name: 'npwp', label: "NPWP", type: "text", required: true },
     { name: 'payment_type_suppliers', label: "Payment type", type: "dropdown", required: true, 
-      options: isLoading ? [] : paymentTypeSuppliers.map(payment => ({
+      options: isLoadingPaymentType ? [] : paymentTypeSuppliers.map(payment => ({
         id: payment.payment_type_supplier_id,
         value: payment.payment_type_supplier_name,
         description: payment.description
@@ -38,8 +38,18 @@ export default function SupplierPage() {
     },
   ];
 
-  const settingData = suppliers.map(supplier => ({
-    ...supplier,
+  // Setting Urutan
+  const settingData = suppliers.map((supplier) => ({
+    id: supplier.supplier_id,
+    name: supplier.name,
+    address: supplier.address, 
+    contact: supplier.contact,
+    email: supplier.email,
+    city: supplier.city,
+    zipcode: supplier.zipcode,
+    phone: supplier.phone,
+    pkp: supplier.pkp,
+    npwp: supplier.npwp,
     payment_type_suppliers: supplier.payment_type_suppliers.map(payment => payment.payment_type_supplier_name)
   }))
 
@@ -97,7 +107,7 @@ export default function SupplierPage() {
         tableHead={['ID', 'Name', 'Address', 'Contact', 'Email', 'City', 'Zip Code',
           'Phone', 'PKP', 'NPWP', 'Payment']}
         tableData={settingData}
-        dataId={'supplier_id'}
+        dataId={'id'}
         page={page}
         count={count}
         rowsPerPage={rowsPerPage}
