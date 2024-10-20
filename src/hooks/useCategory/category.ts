@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getAllCategories } from '@/utils/api/category'
 
-const useCategory = () => {
+const useGetAllCategory = () => {
   const { data, error, isLoading } = useQuery({ 
     queryKey: ['allCategories'], 
     queryFn: getAllCategories,
@@ -12,4 +12,4 @@ const useCategory = () => {
   return { categories: data, error, isLoading }
 }
 
-export { useCategory }
+export { useGetAllCategory }

@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import useAuth from '@/hooks/useAuth/useAuth';
 import NavbarComponent from "@/Components/Navbar.component"
 import FooterComponent from "@/Components/Footer.component"
+import { Box } from "@mui/material";
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -37,8 +38,10 @@ function MainLayout() {
   return (
     <ThemeProvider theme={theme}>
       <NavbarComponent logout={handleLogout}/>
-      <Outlet />
-      {/* <FooterComponent /> */}
+      <Box sx={{ paddingBottom: '80px' }}>
+        <Outlet />
+      </Box>
+      <FooterComponent />
     </ThemeProvider>
   )
 }

@@ -5,17 +5,18 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import ModalForm from '@/Components/ModalForm.component';
 import { useGetProducts } from '@/hooks/useProduct/useProduct';
-import { useCategory } from '@/hooks/useCategory';
-import { useSizeType } from '@/hooks/useSizeType';
+import { useGetAllCategory } from '@/hooks/useCategory';
+import { useGetAllSizeType } from '@/hooks/useSizeType';
 import Table from '@/Components/Table.component';
+import { useGetAllSuppliers } from '@/hooks/useSupplier';
 
 export default function ProductPage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
-  const { categories, isLoading: isLoadingCategories } = useCategory()
-  // const { suppliers, isLoading: isLoadingSuppliers } = useSupplier()
-  const { sizeTypes, isLoading: isLoadingSizeTypes } = useSizeType()
+  const { categories, isLoading: isLoadingCategories } = useGetAllCategory()
+  const { allSuppliers, isLoading: isLoadingAllSuppliers } = useGetAllSuppliers()
+  const { sizeTypes, isLoading: isLoadingSizeTypes } = useGetAllSizeType()
   const { products, count, error, isLoading } = useGetProducts({ page, rowsPerPage })
 
   const formsInput = [
@@ -25,15 +26,17 @@ export default function ProductPage() {
       value: category.name,
       description: ''
     }))},
-    { name: 'supplier_id', label: "Supplier", type: "dropdown", required: true, options: [] },
+    { name: 'supplier_id', label: "Supplier", type: "dropdown", required: true, options: isLoadingAllSuppliers ? [] : allSuppliers.map(supplier => ({
+      id: supplier.supplier_id,
+      value: supplier.name,
+      description: ''
+    }))},
     { name: 'sizetype_id', label: "Size type", type: "dropdown", required: true, options: isLoadingSizeTypes ? [] : sizeTypes.map(sizeType => ({
       id: sizeType.size_type_id,
       value: sizeType.size_type_id,
       description: ''
     }))},
   ]
-
-  console.log('pro', products)
   
   const settingData = products.map((product) => ({
     id: product.product_id,
@@ -88,7 +91,7 @@ export default function ProductPage() {
       </Box>
       
       <Table 
-        tableHead={['ID', 'Barcode', 'Category', 'Supplier', 'Size Type']}
+        tableHead={['Product ID', 'Barcode', 'Category', 'Supplier', 'Size Type']}
         tableData={settingData}
         dataId={'id'}
         page={page}

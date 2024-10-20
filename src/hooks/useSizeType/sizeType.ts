@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getAllSizeTypes } from '@/utils/api/sizeType'
 
-const useSizeType = () => {
+const useGetAllSizeType = () => {
   const { data, error, isLoading } = useQuery({ 
     queryKey: ['allSizeTypes'], 
     queryFn: getAllSizeTypes,
@@ -12,4 +12,4 @@ const useSizeType = () => {
   return { sizeTypes: data, error, isLoading }
 }
 
-export { useSizeType }
+export { useGetAllSizeType }

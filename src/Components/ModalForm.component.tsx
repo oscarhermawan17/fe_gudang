@@ -28,7 +28,7 @@ const generateSchema = (formsInput: FormInputType[]) => {
   
   formsInput.forEach((input) => {
     if (input.required) {
-      schemaObj[input.name] = z.string().min(1, `${input.name} is required`);
+      schemaObj[input.name] = z.string().min(1, `${input.label} is required`);
     } else {
       schemaObj[input.name] = z.string().optional();
     }

@@ -1,6 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { getSuppliers, postSuppliers, deleteSuppliers } from '@/utils/api/supplier'
+import { getAllSuppliers, getSuppliers, postSuppliers, deleteSuppliers } from '@/utils/api/supplier'
+
+const useGetAllSuppliers = () => {
+  const { data, error, isLoading } = useQuery({ 
+    queryKey: ['allSuppliers'], 
+    queryFn: () => getAllSuppliers(),
+    initialData: []
+  });
+
+  return {
+    allSuppliers: data,
+    error,
+    isLoading,
+  };
+}
 
 const useGetSuppliers = ({ page, rowsPerPage }) => {
   const { data, error, isLoading } = useQuery({ 
@@ -48,4 +62,4 @@ const useDeleteSuppliers = () => {
   });
 };
 
-export { useGetSuppliers, usePostSuppliers, useDeleteSuppliers }
+export { useGetAllSuppliers, useGetSuppliers, usePostSuppliers, useDeleteSuppliers }
