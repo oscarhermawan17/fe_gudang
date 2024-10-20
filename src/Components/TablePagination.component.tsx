@@ -27,7 +27,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const tagOfString = (tags: Tags) => tags.map(tag => <Chip color="primary" variant="outlined" label={tag} />)
 
-const ActionButton = ({ dataRow, dataId, onDelete }) => {
+// NEED UPDATE TYPE
+const ActionButton = ({ dataRow, dataId, onDelete }: any) => {
   return (
     <TableCell sx={{ padding: '8px' }} style={{ width: 160 }} align="center">
       <Button sx={{ padding: 0, minWidth: 30 }} >
@@ -56,9 +57,10 @@ const Table = ({ tableHead, tableData, dataId, page, count, rowsPerPage, onSetPa
             {tableData.map((dataRow: any) => (
               <TableRow key={dataRow[dataId]} hover>
                 {Object.values(dataRow).map((dataColumn, index) => {
+                  const column = dataColumn as string | string[];
                   return (
                     <TableCell key={index} sx={{ padding: '8px' }} component="th" scope="row">
-                      {Array.isArray(dataColumn) ? tagOfString(dataColumn) : dataColumn}
+                      {Array.isArray(column) ? tagOfString(column) : column}
                     </TableCell>
                   )
                 })}
