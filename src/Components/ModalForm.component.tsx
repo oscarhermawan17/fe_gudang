@@ -9,9 +9,9 @@ import {
 type FormInputType = {
   name: string;
   label: string;
-  type: 'text' | 'dropdown';
+  type: string;
   required: boolean;
-  options?: Array<{ id: number; value: string; description?: string }>;
+  options?: any[];
 };
 
 interface ModalFormProps {

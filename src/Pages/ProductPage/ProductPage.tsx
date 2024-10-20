@@ -21,8 +21,6 @@ export default function ProductPage() {
   const { sizeTypes, isLoading: isLoadingSizeTypes } = useGetAllSizeType()
   const { products, count } = useGetProducts({ page, rowsPerPage })
 
-  console.log(' products', products)
-
   const formsInput = [
     { name: 'barcode', label: "Barcode", type: "text", required: true,  },
     { name: 'category_id', label: "Category", type: "dropdown", required: true, options: isLoadingCategories ? [] : categories.map((category: CategoryType) => ({
