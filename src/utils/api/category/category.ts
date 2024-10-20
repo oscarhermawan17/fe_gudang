@@ -1,5 +1,4 @@
 import { APIClient } from '../client';
-import type {  } from './category.type';
 
 export const getAllCategories = async () => {
   try {

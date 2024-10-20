@@ -29,7 +29,6 @@ export default function SignUp() {
     navigate("/login");
   }
 
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">

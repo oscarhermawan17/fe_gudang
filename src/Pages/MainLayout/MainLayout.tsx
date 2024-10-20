@@ -1,5 +1,5 @@
 import { useNavigate, Outlet } from "react-router-dom"
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import useAuth from '@/hooks/useAuth/useAuth';
 import NavbarComponent from "@/Components/Navbar.component"
@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
       danger: string;
     };
   }
+
   // allow configuration using `createTheme`
   interface ThemeOptions {
     status?: {

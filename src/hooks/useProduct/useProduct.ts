@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { getProducts } from '@/utils/api/product'
+import type { PaginationItemType  } from '@/utils/types/pagination.type';
 
-const useGetProducts = ({ page, rowsPerPage }) => {
+const useGetProducts = ({ page, rowsPerPage }: PaginationItemType) => {
   const { data, error, isLoading } = useQuery({ 
     queryKey: ['products', page, rowsPerPage], 
     queryFn: () => getProducts({ page, rowsPerPage }),

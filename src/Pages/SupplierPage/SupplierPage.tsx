@@ -2,18 +2,19 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import ModalForm from '@/Components/ModalForm.component';
-import Table from '@/Components/Table.component'
 
+import ModalForm from '@/Components/ModalForm.component';
+import TablePagination from '@/Components/TablePagination.component';
 import { useGetSuppliers, usePostSuppliers, useDeleteSuppliers } from '@/hooks/useSupplier';
 import { usePaymentTypeSuppliers } from '@/hooks/usePaymentTypeSupplier'
+import type { SupplierType, PaymentTypeSupplierType } from '@/utils/types';
 
 export default function SupplierPage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
 
-  const { suppliers, count, error, isLoading } = useGetSuppliers({ page, rowsPerPage })
+  const { suppliers, count } = useGetSuppliers({ page, rowsPerPage })
   const { paymentTypeSuppliers, isLoading: isLoadingPaymentType } = usePaymentTypeSuppliers()
 
   const { mutate: addSuppliers } = usePostSuppliers();
@@ -30,7 +31,7 @@ export default function SupplierPage() {
     { name: 'pkp', label: "PKP", type: "text", required: false },
     { name: 'npwp', label: "NPWP", type: "text", required: true },
     { name: 'payment_type_suppliers', label: "Payment type", type: "dropdown", required: true, 
-      options: isLoadingPaymentType ? [] : paymentTypeSuppliers.map(payment => ({
+      options: isLoadingPaymentType ? [] : paymentTypeSuppliers.map((payment: PaymentTypeSupplierType) => ({
         id: payment.payment_type_supplier_id,
         value: payment.payment_type_supplier_name,
         description: payment.description
@@ -39,7 +40,7 @@ export default function SupplierPage() {
   ];
 
   // Setting Urutan
-  const settingData = suppliers.map((supplier) => ({
+  const settingData = suppliers.map((supplier: SupplierType) => ({
     id: supplier.supplier_id,
     name: supplier.name,
     address: supplier.address, 
@@ -66,7 +67,7 @@ export default function SupplierPage() {
   };
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
     setPage(newPage);
@@ -79,7 +80,7 @@ export default function SupplierPage() {
     setPage(0);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     deleteSuppliers(id)
   }
 
@@ -103,7 +104,7 @@ export default function SupplierPage() {
         />
       </Box>
 
-      <Table 
+      <TablePagination 
         tableHead={['ID', 'Name', 'Address', 'Contact', 'Email', 'City', 'Zip Code',
           'Phone', 'PKP', 'NPWP', 'Payment']}
         tableData={settingData}
@@ -113,7 +114,7 @@ export default function SupplierPage() {
         rowsPerPage={rowsPerPage}
         onSetPage={handleChangePage}
         onRowsPerPage={handleChangeRowsPerPage}
-        onDelete={(id) => handleDelete(id)}
+        onDelete={(id: string) => handleDelete(id)}
       />
     </Box>
   );

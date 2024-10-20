@@ -1,5 +1,7 @@
 import { APIClient } from '../client';
-import type {  } from './supplier.type';
+
+import type { PaginationItemType, CreatingSupplierType } from '@/utils/types'
+
 
 export const getAllSuppliers = async () => {
   try {
@@ -13,7 +15,7 @@ export const getAllSuppliers = async () => {
   }
 }
 
-export const getSuppliers = async ({ page, rowsPerPage }) => {
+export const getSuppliers = async ({ page, rowsPerPage }: PaginationItemType) => {
   try {
     const response = await APIClient.get(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/?page=${page+1}&page_size=${rowsPerPage}`);
     
@@ -24,7 +26,7 @@ export const getSuppliers = async ({ page, rowsPerPage }) => {
   }
 }
 
-export const postSuppliers = async (newSupplier) => {
+export const postSuppliers = async (newSupplier: CreatingSupplierType) => {
   try {
     const response = await APIClient.post(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/`, newSupplier);
 
@@ -35,7 +37,7 @@ export const postSuppliers = async (newSupplier) => {
   }
 }
 
-export const deleteSuppliers = async (supplier_id) => {
+export const deleteSuppliers = async (supplier_id: string) => {
   try {
     const response = await APIClient.delete(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/${supplier_id}/`);
 

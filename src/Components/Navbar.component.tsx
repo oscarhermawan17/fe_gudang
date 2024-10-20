@@ -19,7 +19,8 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function NavbarComponent({ logout }: any) {
   const navigate = useNavigate()
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -29,7 +30,7 @@ function NavbarComponent({ logout }: any) {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = (page: string) => {
+  const handleCloseNavMenu = (_: React.MouseEvent<HTMLElement>, page: string) => {
     setAnchorElNav(null);
     navigate(`/${page}`)
   };
@@ -78,7 +79,7 @@ function NavbarComponent({ logout }: any) {
             >
               <MenuIcon />
             </IconButton>
-            <Menu
+            {/* <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
@@ -107,7 +108,7 @@ function NavbarComponent({ logout }: any) {
                   </Button>
                 </MenuItem>
               ))}
-            </Menu>
+            </Menu> */}
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
@@ -132,7 +133,7 @@ function NavbarComponent({ logout }: any) {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={() => handleCloseNavMenu(page.toLowerCase())}
+                onClick={(event) => handleCloseNavMenu(event, page.toLowerCase())}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}

@@ -10,8 +10,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { useTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
+import type { Tags, TablePaginationProps } from './TablePagination.component.type';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -23,7 +25,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const tagOfString = (tags) => tags.map(tag => <Chip color="primary" variant="outlined" label={tag} />)
+const tagOfString = (tags: Tags) => tags.map(tag => <Chip color="primary" variant="outlined" label={tag} />)
 
 const ActionButton = ({ dataRow, dataId, onDelete }) => {
   return (
@@ -40,7 +42,7 @@ const ActionButton = ({ dataRow, dataId, onDelete }) => {
 
 const Table = ({ tableHead, tableData, dataId, page, count, rowsPerPage, onSetPage, onRowsPerPage,
   onDelete
-}) => {
+}: TablePaginationProps) => {
   return (
     <TableContainer component={Paper}>
         <TableMUI sx={{ minWidth: 500 }} aria-label="custom pagination table">

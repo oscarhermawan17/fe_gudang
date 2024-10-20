@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { getAllSuppliers, getSuppliers, postSuppliers, deleteSuppliers } from '@/utils/api/supplier'
+import type { PaginationItemType } from '@/utils/types/pagination.type';
 
 const useGetAllSuppliers = () => {
   const { data, error, isLoading } = useQuery({ 
@@ -16,7 +17,7 @@ const useGetAllSuppliers = () => {
   };
 }
 
-const useGetSuppliers = ({ page, rowsPerPage }) => {
+const useGetSuppliers = ({ page, rowsPerPage }: PaginationItemType) => {
   const { data, error, isLoading } = useQuery({ 
     queryKey: ['suppliers', page, rowsPerPage], 
     queryFn: () => getSuppliers({ page, rowsPerPage }),
@@ -41,7 +42,10 @@ const usePostSuppliers = () => {
   return useMutation({
     mutationFn: postSuppliers,
     onSuccess: () => {
-      queryClient.invalidateQueries(['suppliers']);
+      // queryClient.invalidateQueries(['suppliers']);
+      queryClient.invalidateQueries({
+        queryKey: ['suppliers']
+      });
     },
     onError: (error) => {
       console.error('Error creating supplier:', error);
@@ -54,7 +58,9 @@ const useDeleteSuppliers = () => {
   return useMutation({
     mutationFn: deleteSuppliers,
     onSuccess: () => {
-      queryClient.invalidateQueries(['suppliers']);
+      queryClient.invalidateQueries({
+        queryKey: ['suppliers']
+      });
     },
     onError: (error) => {
       console.error('Error creating supplier:', error);

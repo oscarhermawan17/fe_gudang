@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { useTheme, styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
+// import { useTheme, styled } from '@mui/material/styles';
+
 import ModalForm from '@/Components/ModalForm.component';
 import { useGetProducts } from '@/hooks/useProduct/useProduct';
 import { useGetAllCategory } from '@/hooks/useCategory';
 import { useGetAllSizeType } from '@/hooks/useSizeType';
-import Table from '@/Components/Table.component';
+import Table from '@/Components/TablePagination.component';
 import { useGetAllSuppliers } from '@/hooks/useSupplier';
+import type { ProductType, SupplierType, CategoryType, SizeTypeType } from '@/utils/types';
 
 export default function ProductPage() {
   const [page, setPage] = React.useState(0);
@@ -17,28 +19,30 @@ export default function ProductPage() {
   const { categories, isLoading: isLoadingCategories } = useGetAllCategory()
   const { allSuppliers, isLoading: isLoadingAllSuppliers } = useGetAllSuppliers()
   const { sizeTypes, isLoading: isLoadingSizeTypes } = useGetAllSizeType()
-  const { products, count, error, isLoading } = useGetProducts({ page, rowsPerPage })
+  const { products, count } = useGetProducts({ page, rowsPerPage })
+
+  console.log(' products', products)
 
   const formsInput = [
     { name: 'barcode', label: "Barcode", type: "text", required: true,  },
-    { name: 'category_id', label: "Category", type: "dropdown", required: true, options: isLoadingCategories ? [] : categories.map(category => ({
+    { name: 'category_id', label: "Category", type: "dropdown", required: true, options: isLoadingCategories ? [] : categories.map((category: CategoryType) => ({
       id: category.category_id,
       value: category.name,
       description: ''
     }))},
-    { name: 'supplier_id', label: "Supplier", type: "dropdown", required: true, options: isLoadingAllSuppliers ? [] : allSuppliers.map(supplier => ({
+    { name: 'supplier_id', label: "Supplier", type: "dropdown", required: true, options: isLoadingAllSuppliers ? [] : allSuppliers.map((supplier: SupplierType) => ({
       id: supplier.supplier_id,
       value: supplier.name,
       description: ''
     }))},
-    { name: 'sizetype_id', label: "Size type", type: "dropdown", required: true, options: isLoadingSizeTypes ? [] : sizeTypes.map(sizeType => ({
+    { name: 'sizetype_id', label: "Size type", type: "dropdown", required: true, options: isLoadingSizeTypes ? [] : sizeTypes.map((sizeType: SizeTypeType) => ({
       id: sizeType.size_type_id,
       value: sizeType.size_type_id,
       description: ''
     }))},
   ]
   
-  const settingData = products.map((product) => ({
+  const settingData = products.map((product: ProductType ) => ({
     id: product.product_id,
     barcode: product.barcode,
     category: product.category?.category_id,
@@ -53,7 +57,7 @@ export default function ProductPage() {
   const handleSubmit = async() => {};
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
     setPage(newPage);
@@ -66,8 +70,8 @@ export default function ProductPage() {
     setPage(0);
   };
 
-  const handleDelete = (id) => {
-
+  const handleDelete = (id: string) => {
+    console.log(id)
   }
 
   return (

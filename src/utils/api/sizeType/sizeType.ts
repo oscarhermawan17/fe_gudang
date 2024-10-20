@@ -1,5 +1,4 @@
 import { APIClient } from '../client';
-import type {  } from './sizeType.type';
 
 export const getAllSizeTypes = async () => {
   try {
