@@ -8,17 +8,27 @@ import TablePagination from '@/Components/TablePagination.component';
 import { useGetSuppliers, usePostSuppliers, useDeleteSuppliers } from '@/hooks/useSupplier';
 import { usePaymentTypeSuppliers } from '@/hooks/usePaymentTypeSupplier'
 import type { SupplierType, PaymentTypeSupplierType } from '@/utils/types';
+import ModalConfirmation from '@/Components/ModalConfirmation.component';
+import useToggle from '@/hooks/useToggle';
 
 export default function SupplierPage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [dataOnDelete, setDataOnDelete] = React.useState(undefined);
   const [open, setOpen] = React.useState(false);
 
+  const { isOpen: isOpenModalConfirmation, closeToggle, openToggle } = useToggle(false);
   const { suppliers, count } = useGetSuppliers({ page, rowsPerPage })
   const { paymentTypeSuppliers, isLoading: isLoadingPaymentType } = usePaymentTypeSuppliers()
 
   const { mutate: addSuppliers } = usePostSuppliers();
-  const { mutate: deleteSuppliers } = useDeleteSuppliers();
+  const { mutate: onDeleteSupplier } = useDeleteSuppliers();
+
+  React.useEffect(() => {
+    if(isOpenModalConfirmation) {
+      closeToggle()
+    }
+  }, [suppliers])
 
   const formsInput = [
     { name: 'name', label: "Supplier name", type: "text", required: true,  },
@@ -39,6 +49,8 @@ export default function SupplierPage() {
     },
   ];
 
+  
+
   // Setting Urutan
   const settingData = suppliers.map((supplier: SupplierType) => ({
     id: supplier.supplier_id,
@@ -51,8 +63,10 @@ export default function SupplierPage() {
     phone: supplier.phone,
     pkp: supplier.pkp,
     npwp: supplier.npwp,
-    payment_type_suppliers: supplier.payment_type_suppliers.map(payment => payment.payment_type_supplier_name)
+    payment_type_suppliers: supplier.payment_type_suppliers[0].payment_type_supplier_name // GANTI
   }))
+
+  console.log({ settingData })
 
   const handleOpen = () => setOpen(true);
 
@@ -80,8 +94,13 @@ export default function SupplierPage() {
     setPage(0);
   };
 
-  const handleDelete = (id: string) => {
-    deleteSuppliers(id)
+  const deleteClickHandle = (data) => {
+    setDataOnDelete(data)
+    openToggle()
+  }
+
+  const deleteSupplierHandler = () => {
+    onDeleteSupplier(dataOnDelete.id)
   }
 
   return (
@@ -102,6 +121,14 @@ export default function SupplierPage() {
           formsInput={formsInput}
           onSubmit={handleSubmit}
         />
+        <ModalConfirmation
+          open={isOpenModalConfirmation}
+          title={`You will delete Supplier ${dataOnDelete ? dataOnDelete.id : ''}`}
+          body="Are you sure you want to proceed?"
+          onClose={closeToggle}
+          onConfirm={deleteSupplierHandler}
+        />
+
       </Box>
 
       <TablePagination 
@@ -114,7 +141,7 @@ export default function SupplierPage() {
         rowsPerPage={rowsPerPage}
         onSetPage={handleChangePage}
         onRowsPerPage={handleChangeRowsPerPage}
-        onDelete={(id: string) => handleDelete(id)}
+        onDelete={(dataRow) => deleteClickHandle(dataRow)}
       />
     </Box>
   );

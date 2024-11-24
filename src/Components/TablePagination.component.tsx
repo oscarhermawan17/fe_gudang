@@ -34,7 +34,7 @@ const ActionButton = ({ dataRow, dataId, onDelete }: any) => {
       <Button sx={{ padding: 0, minWidth: 30 }} >
         <ModeEditIcon fontSize='medium'/>
       </Button>
-      <Button sx={{ padding: 0, minWidth: 30 }} color='error' onClick={() => onDelete(dataRow[dataId])}>
+      <Button sx={{ padding: 0, minWidth: 30 }} color='error' onClick={() => onDelete(dataRow)}>
         <DeleteForeverIcon fontSize='medium'/>
       </Button>
     </TableCell>

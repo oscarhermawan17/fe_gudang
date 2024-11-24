@@ -12,3 +12,25 @@ export const getProducts = async ({ page, rowsPerPage }: PaginationItemType) => 
     throw err;
   }
 }
+
+export const createProduct = async (newProduct) => {
+  try {
+    const response = await APIClient.post(`/api/${import.meta.env.VITE_BE_API_VERSION}/products/`, newProduct);
+    
+    return response.data.data
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+export const deleteProduct = async (product_id: string) => {
+  try {
+    const response = await APIClient.delete(`/api/${import.meta.env.VITE_BE_API_VERSION}/products/${product_id}/`);
+
+    return response.data
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}

@@ -7,7 +7,7 @@ export const getAllSuppliers = async () => {
   try {
     // NEED UPDATE
     const response = await APIClient.get(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/?page=1&page_size=50`);
-    
+
     return response.data.results
   } catch (err) {
     console.error(err);

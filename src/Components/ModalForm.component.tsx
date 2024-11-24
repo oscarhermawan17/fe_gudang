@@ -12,6 +12,7 @@ type FormInputType = {
   type: string;
   required: boolean;
   options?: any[];
+  disabled?: boolean;
 };
 
 interface ModalFormProps {
@@ -20,6 +21,7 @@ interface ModalFormProps {
   title: string;
   formsInput: FormInputType[];
   onSubmit: (data: { [key: string]: string }) => void;
+  onChange: () => void
 }
 
 // Dynamic Zod Schema based on formsInput
@@ -37,7 +39,7 @@ const generateSchema = (formsInput: FormInputType[]) => {
   return z.object(schemaObj);
 };
 
-const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput, onSubmit }) => {
+const ModalForm: React.FC<ModalFormProps> = ({ open, onChange, onClose, title, formsInput, onSubmit }) => {  
   const schema = generateSchema(formsInput);
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -59,16 +61,54 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput,
         <form onSubmit={handleSubmit(onSubmitForm)}>
           <FormControl fullWidth>
             {formsInput.map((input) => {
-              if (input.type === 'text') {
+              if (input.type === 'percentage') {
+                return (
+                  <Box key={input.name} sx={{ marginBottom: 2 }}>
+                    <TextField
+                      type="number"
+                      size={'small'}
+                      inputProps={{ min: 0, max: 100 }}
+                      fullWidth
+                      label={input.label}
+                      disabled={input.disabled}
+                      {...register(input.name)}
+                      error={!!errors[input.name]}
+                      helperText={errors[input.name]?.message as string}
+                      value={input.value}
+                      onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
+                    />
+                  </Box>
+                );
+              } else if (input.type === 'number') {
+                return (
+                  <Box key={input.name} sx={{ marginBottom: 2 }}>
+                    <TextField
+                      type="number"
+                      size={'small'}
+                      fullWidth
+                      label={input.label}
+                      disabled={input.disabled}
+                      {...register(input.name)}
+                      error={!!errors[input.name]}
+                      helperText={errors[input.name]?.message as string}
+                      value={input.value}
+                      onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
+                    />
+                  </Box>
+                );
+              } else if (input.type === 'text') {
                 return (
                   <Box key={input.name} sx={{ marginBottom: 2 }}>
                     <TextField
                       size={'small'}
                       fullWidth
                       label={input.label}
+                      disabled={input.disabled}
                       {...register(input.name)}
                       error={!!errors[input.name]}
                       helperText={errors[input.name]?.message as string}
+                      value={input.value}
+                      onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
                     />
                   </Box>
                 );
@@ -77,13 +117,14 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput,
                   <Box key={input.name} sx={{ marginBottom: 2 }}>
                     <Select
                       fullWidth
-                      defaultValue=""
                       {...register(input.name)}
                       error={!!errors[input.name]}
                       displayEmpty
                       size={'small'}
+                      value={input.value}
+                      onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
                     >
-                      <MenuItem value="" disabled>
+                      <MenuItem disabled>
                         Select {input.label}
                       </MenuItem>
                       {input.options?.map((option) => (
