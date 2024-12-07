@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { getAllSuppliers, getSuppliers, postSuppliers, deleteSuppliers } from '@/utils/api/supplier'
+import { getAllSuppliers, getSuppliers, postSuppliers, updateSupplier, deleteSuppliers } from '@/utils/api/supplier'
 import type { PaginationItemType } from '@/utils/types/pagination.type';
 
 const useGetAllSuppliers = () => {
@@ -29,7 +29,7 @@ const useGetSuppliers = ({ page, rowsPerPage }: PaginationItemType) => {
   });
 
   return {
-    suppliers: data?.results || [],
+    suppliers: data?.results?.data || [],
     page: data?.page || 1,
     count: data?.count || 0,
     error,
@@ -53,6 +53,21 @@ const usePostSuppliers = () => {
   });
 };
 
+const useUpdateSupplier = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateSupplier,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['suppliers']
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating supplier:', error);
+    },
+  });
+};
+
 const useDeleteSuppliers = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -68,4 +83,4 @@ const useDeleteSuppliers = () => {
   });
 };
 
-export { useGetAllSuppliers, useGetSuppliers, usePostSuppliers, useDeleteSuppliers }
+export { useGetAllSuppliers, useGetSuppliers, usePostSuppliers, useUpdateSupplier, useDeleteSuppliers }

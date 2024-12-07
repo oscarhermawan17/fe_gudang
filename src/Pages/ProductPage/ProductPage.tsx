@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState, } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -16,16 +16,22 @@ import type { ProductType, SupplierType, CategoryType, SizeTypeType } from '@/ut
 import useToggle from '@/hooks/useToggle';
 
 export default function ProductPage() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [open, setOpen] = React.useState(false);
-  const [dataOnDelete, setDataOnDelete] = React.useState(undefined);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [open, setOpen] = useState(false);
+  const [dataOnDelete, setDataOnDelete] = useState(undefined);
+  const [isUpdate, setIsUpdate] = useState(false)
+
+  const { isOpen: isOpenModalConfirmation, closeToggle, openToggle } = useToggle(false);
+  const { products, count } = useGetProducts({ page, rowsPerPage })
+  const { mutate: onCreateProduct } = useCreateProduct();
+  const { mutate: onDeleteProduct} = useDeleteProduct()
   
   const { categories, isLoading: isLoadingCategories } = useGetAllCategory()
   const { allSuppliers, isLoading: isLoadingAllSuppliers } = useGetAllSuppliers()
   const { sizeTypes, isLoading: isLoadingSizeTypes } = useGetAllSizeType()
 
-  const [formsInput, setFormsInput] = React.useState({
+  const [formsInput, setFormsInput] = useState({
     "product_name" : { 
       name: 'product_name',
       label: "Product Name",
@@ -97,23 +103,21 @@ export default function ProductPage() {
     },
   })
 
-  const { isOpen: isOpenModalConfirmation, closeToggle, openToggle } = useToggle(false);
-  const { products, count } = useGetProducts({ page, rowsPerPage })
-  const { mutate: onCreateProduct } = useCreateProduct();
-  const { mutate: onDeleteProduct} = useDeleteProduct()
-
-  React.useEffect(() => {
+  useEffect(() => {
     if(isOpenModalConfirmation) {
       closeToggle()
     }
   }, [products])
   
   const settingData = products.map((product: ProductType ) => ({
-    id: product.product_id,
-    barcode: product.barcode,
+    product_name: product.product_name,
+    color: 'red',
     category: product.category?.name,
     supplier: product.supplier?.name,
-    sizetype: product.sizetype?.size_type_id
+    sizetype: product.sizetype?.size_type_id,
+    purchasePrice: product.purchase_price,
+    sellingPrice: product.selling_price,
+    consignment: product.consignment,
   }))
 
   const handleOpen = () => setOpen(true);
@@ -144,21 +148,25 @@ export default function ProductPage() {
     setPage(0);
   };
 
-  const deleteClickHandle = (data) => {
-    setDataOnDelete(data)
+  const deleteProductHandler = (data) => {
+    const dataWithId = products.find(product => product.product_name === data.product_name)
+    setDataOnDelete(dataWithId)
     openToggle()
   }
 
-  const deleteProductHandle = () => {
-    onDeleteProduct(dataOnDelete.id)
+  const deleteProductConfirm = () => {
+    onDeleteProduct(dataOnDelete.product_id)
   }
 
   const changeValueHandler = ({ value, entity }) => {
-    const randomNum = Math.floor((Math.random() * 100) + 1);
-
     if(entity === "supplier_id") {
-      const findSupplierType = allSuppliers.find((supplier) => supplier.supplier_id === value)
-      if(randomNum % 2 === 0) { // whole sale
+      console.log({ allSuppliers, idnya: value })
+
+
+      const findSupplier = allSuppliers.find((supplier) => supplier.supplier_id === value)
+      const supplierType = findSupplier.payment_type_supplier.payment_type_supplier_name
+
+      if(supplierType === 'Wholeshale') {
         setFormsInput((prev) => {
           return {
             ...prev,
@@ -166,8 +174,8 @@ export default function ProductPage() {
               ...prev[entity],
               value
             },
-            purchase_price: {
-              ...prev.purchase_price,
+            selling_price: {
+              ...prev.selling_price,
               disabled: false,
             },
             consignment: {
@@ -177,7 +185,7 @@ export default function ProductPage() {
             }
           }
         })
-      } else {
+      } else if(supplierType === 'Consignment Payment'){
         setFormsInput((prev) => {
           return {
             ...prev,
@@ -200,6 +208,8 @@ export default function ProductPage() {
     }
 
     else if(entity === "purchase_price" && true) {
+      const nilai = Number(value) + (Number(value) * Number(formsInput.consignment / 100 ))
+      console.log({ nilai })
       setFormsInput((prev) => {
         return {
           ...prev,
@@ -209,11 +219,13 @@ export default function ProductPage() {
           },
           selling_price: {
             ...prev.selling_price,
-            value: 100/formsInput.consignment.value * value
+            value: nilai
           }
         }
       })
     } else if(entity === "consignment" && true) {
+      const nilai = Number(formsInput.purchase_price) + (Number(formsInput.purchase_price) * Number(value / 100 ))
+      console.log({ nilai })
       setFormsInput((prev) => {
         return {
           ...prev,
@@ -223,7 +235,7 @@ export default function ProductPage() {
           },
           selling_price: {
             ...prev.selling_price,
-            value: 100/value * formsInput.purchase_price.value
+            value: nilai
           }
         }
       })
@@ -238,6 +250,10 @@ export default function ProductPage() {
         }
       })
     }
+  }
+
+  const updateProductHandler = (data) => {
+    setIsUpdate(true)
   }
 
   return (
@@ -261,23 +277,24 @@ export default function ProductPage() {
         />
         <ModalConfirmation
           open={isOpenModalConfirmation}
-          title={`You will delete Product ${dataOnDelete ? dataOnDelete.id : ''}`}
+          title={`You will delete Product ${dataOnDelete ? dataOnDelete.product_name : ''}`}
           body="Are you sure you want to proceed?"
           onClose={closeToggle}
-          onConfirm={deleteProductHandle}
+          onConfirm={deleteProductConfirm}
         />
       </Box>
       
       <Table 
-        tableHead={['Product ID', 'Barcode', 'Category', 'Supplier', 'Size Type']}
+        tableHead={['Product Name', 'Color', 'Category', 'Supplier', 'Size Type', 'Purchase', 'Selling', 'Consignment']}
         tableData={settingData}
-        dataId={'id'}
+        dataId={'product_name'}
         page={page}
         count={count}
         rowsPerPage={rowsPerPage}
         onSetPage={handleChangePage}
         onRowsPerPage={handleChangeRowsPerPage}
-        onDelete={(dataRow) => deleteClickHandle(dataRow)}
+        onDelete={(dataRow) => deleteProductHandler(dataRow)}
+        onUpdate={(dataRow) => updateProductHandler(dataRow)}
       />
     </Box>
   );

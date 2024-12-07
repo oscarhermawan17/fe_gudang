@@ -124,7 +124,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, onChange, onClose, title, f
                       value={input.value}
                       onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
                     >
-                      <MenuItem disabled>
+                      <MenuItem disabled value="">
                         Select {input.label}
                       </MenuItem>
                       {input.options?.map((option) => (

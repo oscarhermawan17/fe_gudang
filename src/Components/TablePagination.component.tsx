@@ -28,10 +28,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const tagOfString = (tags: Tags) => tags.map(tag => <Chip color="primary" variant="outlined" label={tag} />)
 
 // NEED UPDATE TYPE
-const ActionButton = ({ dataRow, dataId, onDelete }: any) => {
+const ActionButton = ({ dataRow, dataId, onDelete, onUpdate }: any) => {
   return (
     <TableCell sx={{ padding: '8px' }} style={{ width: 160 }} align="center">
-      <Button sx={{ padding: 0, minWidth: 30 }} >
+      <Button sx={{ padding: 0, minWidth: 30 }} onClick={() => onUpdate(dataRow)} >
         <ModeEditIcon fontSize='medium'/>
       </Button>
       <Button sx={{ padding: 0, minWidth: 30 }} color='error' onClick={() => onDelete(dataRow)}>
@@ -42,7 +42,7 @@ const ActionButton = ({ dataRow, dataId, onDelete }: any) => {
 }
 
 const Table = ({ tableHead, tableData, dataId, page, count, rowsPerPage, onSetPage, onRowsPerPage,
-  onDelete
+  onDelete, onUpdate
 }: TablePaginationProps) => {
   return (
     <TableContainer component={Paper}>
@@ -64,7 +64,7 @@ const Table = ({ tableHead, tableData, dataId, page, count, rowsPerPage, onSetPa
                     </TableCell>
                   )
                 })}
-                <ActionButton dataRow={dataRow} dataId={dataId} onDelete={onDelete} />
+                <ActionButton dataRow={dataRow} dataId={dataId} onDelete={onDelete} onUpdate={onUpdate} />
               </TableRow>
             ))}
           </TableBody>
