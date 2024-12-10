@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   TextField, Button, Box, FormControl, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
@@ -21,42 +21,13 @@ interface ModalFormProps {
   onChange: (args: { value: string; entity: string }) => void;
 }
 
-const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput, onSubmit, onChange }) => {
-  const [formValues, setFormValues] = useState<{ [key: string]: string }>(
-    formsInput.reduce((acc, curr) => {
-      acc[curr.name] = '';
-      return acc;
-    }, {} as { [key: string]: string })
-  );
-
-  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>, name: string) => {
-    const value = e.target.value as string;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    onChange({ value, entity: name });
-  };
-
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-    formsInput.forEach((input) => {
-      if (input.required && !formValues[input.name]) {
-        errors[input.name] = `${input.label} is required`;
-      }
-    });
-    return errors;
-  };
-
+const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, isUpdate, formsInput, onSubmit, onChange }) => {
   const handleSubmit = () => {
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-    onSubmit(formValues);
+    const submitData = formsInput.reduce((acc, currentValue) => {
+      acc[currentValue.name] = currentValue.value
+      return acc
+    }, {})
+    onSubmit(submitData);
     onClose();
   };
 
@@ -75,19 +46,16 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput,
                   label={input.label}
                   disabled={input.disabled}
                   inputProps={input.type === 'percentage' ? { min: 0, max: 100 } : undefined}
-                  value={formValues[input.name]}
-                  onChange={(e) => handleChange(e, input.name)}
-                  error={!!formErrors[input.name]}
-                  helperText={formErrors[input.name]}
+                  value={input.value}
+                  onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
                 />
               ) : input.type === 'dropdown' && input.options ? (
                 <Select
                   fullWidth
                   displayEmpty
                   size="small"
-                  value={formValues[input.name]}
-                  onChange={(e) => handleChange(e, input.name)}
-                  error={!!formErrors[input.name]}
+                  value={input.value}
+                  onChange={(e) => onChange({ value: e.target.value, entity: input.name })}
                 >
                   <MenuItem disabled value="">
                     Select {input.label}
@@ -105,8 +73,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, onClose, title, formsInput,
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          Submit
+        <Button onClick={handleSubmit} variant="contained" color={isUpdate ? 'primary' : 'inherit'}>
+          {isUpdate ? 'Update' : 'Submit'}
         </Button>
       </DialogActions>
     </Dialog>

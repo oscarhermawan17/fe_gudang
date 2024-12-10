@@ -17,6 +17,7 @@ export default function SupplierPage() {
   const [dataOnDelete, setDataOnDelete] = useState(undefined);
   const [openModalForm, setOpenModalForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false)
+  const [idForUpdate, setIdForUpdate] = useState(undefined)
 
   const { isOpen: isOpenModalConfirmation, closeToggle, openToggle } = useToggle(false);
   const { suppliers, count } = useGetSuppliers({ page, rowsPerPage })
@@ -32,6 +33,22 @@ export default function SupplierPage() {
       closeToggle()
     }
   }, [suppliers])
+
+  useEffect(() => {
+    if (!isLoadingPaymentType && paymentTypeSuppliers.length > 0) {
+      setFormsInput((prev) => ({
+        ...prev,
+        "payment_type_supplier": {
+          ...prev["payment_type_supplier"],
+          options: paymentTypeSuppliers.map((payment) => ({
+            id: payment.payment_type_supplier_id,
+            value: payment.payment_type_supplier_name,
+            description: payment.description
+          }))
+        }
+      }));
+    }
+  }, [paymentTypeSuppliers, isLoadingPaymentType]);
 
   const [formsInput, setFormsInput] = useState({
     "name" : { 
@@ -144,16 +161,21 @@ export default function SupplierPage() {
     setOpenModalForm(false);
   }
 
-  const handleSubmit = async(data: any) => {
-    const newData = {
-      ...data,
-      payment_type_supplier_id: data.payment_type_supplier
+  const handleSubmit = (newData) => {
+    const submitData = {
+      ...newData,
+      payment_type_supplier_id: newData.payment_type_supplier
     }
-    addSuppliers(newData)
+    addSuppliers(submitData)
   };
 
-  const handleUpdate = (data) => {
-    onUpdateSupplier('updatedData', updatedData)
+  const handleUpdate = (newData) => {
+    const submitData = {
+      ...newData,
+      supplier_id: idForUpdate,
+      payment_type_supplier_id: newData.payment_type_supplier
+    }
+    onUpdateSupplier(submitData)
   }
 
   const handleChangePage = (
@@ -177,6 +199,7 @@ export default function SupplierPage() {
 
   const updateSupplierHandler = (data) => {
     setIsUpdate(true)
+    setIdForUpdate(data.id)
     const findSupplier = paymentTypeSuppliers.find(payment => payment.payment_type_supplier_name === data.payment_type_supplier)
     const idSupplier = findSupplier.payment_type_supplier_id
 
@@ -184,8 +207,6 @@ export default function SupplierPage() {
       ...data,
       payment_type_supplier: idSupplier
     }
-    onUpdateSupplier(formsInput)
-
     setFormsInput((currentData) => {
       const updatedInput = {};
       for (const key in currentData) {
@@ -235,6 +256,7 @@ export default function SupplierPage() {
           formsInput={Object.values(formsInput)}
           onChange={changeValueHandler}
           onSubmit={isUpdate ? handleUpdate : handleSubmit}
+          isUpdate={isUpdate}
         />
         <ModalConfirmation
           open={isOpenModalConfirmation}

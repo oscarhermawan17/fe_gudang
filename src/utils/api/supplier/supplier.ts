@@ -39,9 +39,9 @@ export const postSuppliers = async (newSupplier: CreatingSupplierType) => {
 
 export const updateSupplier = async (supplier) => {
   try {
-    const response = await APIClient.put(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/${supplier.supplier_id}/`);
-    console.log('response', response)
-  //   return response.data
+    const response = await APIClient.put(`/api/${import.meta.env.VITE_BE_API_VERSION}/suppliers/${supplier.supplier_id}/`, supplier);
+    console.log(response.data)
+    return response.data
   } catch (err) {
     console.error(err);
     throw err;

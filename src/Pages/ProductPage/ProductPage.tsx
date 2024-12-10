@@ -5,20 +5,21 @@ import AddIcon from '@mui/icons-material/Add';
 
 import ModalForm from '@/Components/ModalForm.component';
 import ModalConfirmation from '@/Components/ModalConfirmation.component';
-import { SelectChangeEvent } from '@mui/material/Select';
 
 import { useGetProducts, useCreateProduct, useDeleteProduct } from '@/hooks/useProduct/useProduct';
 import { useGetAllCategory } from '@/hooks/useCategory';
 import { useGetAllSizeType } from '@/hooks/useSizeType';
 import Table from '@/Components/TablePagination.component';
 import { useGetAllSuppliers } from '@/hooks/useSupplier';
+import { useGetAllColors  } from '@/hooks/useColor';
+
 import type { ProductType, SupplierType, CategoryType, SizeTypeType } from '@/utils/types';
 import useToggle from '@/hooks/useToggle';
 
 export default function ProductPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [open, setOpen] = useState(false);
+  const [openModalForm, setOpenModalForm] = useState(false);
   const [dataOnDelete, setDataOnDelete] = useState(undefined);
   const [isUpdate, setIsUpdate] = useState(false)
 
@@ -30,6 +31,7 @@ export default function ProductPage() {
   const { categories, isLoading: isLoadingCategories } = useGetAllCategory()
   const { allSuppliers, isLoading: isLoadingAllSuppliers } = useGetAllSuppliers()
   const { sizeTypes, isLoading: isLoadingSizeTypes } = useGetAllSizeType()
+  const { allColors, isLoading: isLoadingAllColors } = useGetAllColors()
 
   const [formsInput, setFormsInput] = useState({
     "product_name" : { 
@@ -39,45 +41,38 @@ export default function ProductPage() {
       required: true,
       value: ''
     },
-    "color": {
-      name: "color",
+    "color_id": {
+      name: "color_id",
       label: "Color",
-      type: "text",
+      type: "dropdown",
       required: true,
-      value: ''
+      value: "",
+      options: []
     },
     "category_id" : {
       name: "category_id",
       label: "Category",
       type: "dropdown",
       required: true,
-      options: isLoadingCategories ? [] : categories.map((category: CategoryType) => ({
-        id: category.category_id,
-        value: category.name,
-        description: ''
-    }))},
+      value: "",
+      options: []
+    },
     "supplier_id": {
       name: "supplier_id",
       label: "Supplier",
       type: "dropdown",
       required: true, 
-      options: isLoadingAllSuppliers ? [] : allSuppliers.map((supplier: SupplierType) => {
-        return {
-          id: supplier.supplier_id,
-          value: supplier.name,
-          description: ''
-        }
-      })},
+      value: "",
+      options: []
+    },
     "sizetype_id": {
       name: "sizetype_id",
       label: "Size type", 
       type:"dropdown",
       required: true,
-      options: isLoadingSizeTypes ? [] : sizeTypes.map((sizeType: SizeTypeType) => ({
-        id: sizeType.size_type_id,
-        value: sizeType.size_type_id,
-        description: ''
-      }))},
+      value: "",
+      options: []
+    },
     "purchase_price": {
       name: "purchase_price",
       label: "Purchase Price",
@@ -108,6 +103,71 @@ export default function ProductPage() {
       closeToggle()
     }
   }, [products])
+
+  useEffect(() => {
+    if (!isLoadingAllColors && allColors.length > 0) {
+      setFormsInput((prev) => ({
+        ...prev,
+        "color_id": {
+          ...prev["color_id"],
+          options: allColors.map((color) => ({
+            id: color.color_id,
+            value: color.name,
+          }))
+        }
+      }));
+    }
+  }, [allColors, isLoadingAllColors]);
+
+  useEffect(() => {
+    if (!isLoadingCategories && categories.length > 0) {
+      setFormsInput((prev) => ({
+        ...prev,
+        "category_id": {
+          ...prev["category_id"],
+          options: categories.map((category: CategoryType) => ({
+              id: category.category_id,
+              value: category.name,
+              description: ''
+          }))
+        }
+      }));
+    }
+  }, [categories, isLoadingCategories]);
+
+  useEffect(() => {
+    if (!isLoadingAllSuppliers && allSuppliers.length > 0) {
+      setFormsInput((prev) => ({
+        ...prev,
+        "supplier_id": {
+          ...prev["supplier_id"],
+          options: allSuppliers.map((supplier: SupplierType) => {
+            return {
+              id: supplier.supplier_id,
+              value: supplier.name,
+              description: ''
+            }
+          })
+        }
+      }));
+    }
+  }, [allSuppliers, isLoadingAllSuppliers]);
+
+  useEffect(() => {
+    if (!isLoadingSizeTypes && sizeTypes.length > 0) {
+      setFormsInput((prev) => ({
+        ...prev,
+        "sizetype_id": {
+          ...prev["sizetype_id"],
+          options: sizeTypes.map((sizeType: SizeTypeType) => ({
+            id: sizeType.size_type_id,
+            value: sizeType.size_type_id,
+            description: ''
+          }))
+        }
+      }));
+    }
+  }, [sizeTypes, isLoadingSizeTypes]);
   
   const settingData = products.map((product: ProductType ) => ({
     product_name: product.product_name,
@@ -120,9 +180,22 @@ export default function ProductPage() {
     consignment: product.consignment,
   }))
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => setOpenModalForm(true);
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setIsUpdate(false)
+    setFormsInput((currentData) => {
+      const updatedInput = {};
+      for (const key in currentData) {
+        updatedInput[key] = {
+          ...currentData[key],
+          value: ""
+        };
+      }
+      return updatedInput;
+    })
+    setOpenModalForm(false);
+  }
   
   const handleSubmit = async(addProduct: any) => {
     const createNewProduct = {
@@ -133,6 +206,15 @@ export default function ProductPage() {
     }
     onCreateProduct(createNewProduct)
   };
+
+  const handleUpdate = (newData) => {
+    // const submitData = {
+    //   ...newData,
+    //   supplier_id: idForUpdate,
+    //   payment_type_supplier_id: newData.payment_type_supplier
+    // }
+    // onUpdateSupplier(submitData)
+  }
 
   const handleChangePage = (
     _: React.MouseEvent<HTMLButtonElement> | null,
@@ -159,14 +241,14 @@ export default function ProductPage() {
   }
 
   const changeValueHandler = ({ value, entity }) => {
+    const supplierFind = allSuppliers.find((supplier) => supplier.supplier_id === formsInput.supplier_id.value)
+    const supplierType = supplierFind && supplierFind.payment_type_supplier.payment_type_supplier_name
+
     if(entity === "supplier_id") {
-      console.log({ allSuppliers, idnya: value })
-
-
       const findSupplier = allSuppliers.find((supplier) => supplier.supplier_id === value)
-      const supplierType = findSupplier.payment_type_supplier.payment_type_supplier_name
+      const typeSupplier = findSupplier.payment_type_supplier.payment_type_supplier_name
 
-      if(supplierType === 'Wholeshale') {
+      if(typeSupplier === "Wholeshale") {
         setFormsInput((prev) => {
           return {
             ...prev,
@@ -185,7 +267,7 @@ export default function ProductPage() {
             }
           }
         })
-      } else if(supplierType === 'Consignment Payment'){
+      } else if(typeSupplier === "Consignment Payment"){
         setFormsInput((prev) => {
           return {
             ...prev,
@@ -206,10 +288,12 @@ export default function ProductPage() {
         })
       }
     }
+    // untuk isi otomatis ke selling price, type supplier harus consignment
+    else if((entity === "purchase_price" || entity === "consignment") && supplierType === "Consignment Payment") {
+      const purchaseToNumber = entity === "purchase_price" ? Number(value) : Number(formsInput.purchase_price.value)
+      const consigmentToNumber = entity === "purchase_price" ? Number(formsInput.consignment.value) : Number(value)
+      const sellingPrice = purchaseToNumber + purchaseToNumber * consigmentToNumber / 100
 
-    else if(entity === "purchase_price" && true) {
-      const nilai = Number(value) + (Number(value) * Number(formsInput.consignment / 100 ))
-      console.log({ nilai })
       setFormsInput((prev) => {
         return {
           ...prev,
@@ -219,23 +303,7 @@ export default function ProductPage() {
           },
           selling_price: {
             ...prev.selling_price,
-            value: nilai
-          }
-        }
-      })
-    } else if(entity === "consignment" && true) {
-      const nilai = Number(formsInput.purchase_price) + (Number(formsInput.purchase_price) * Number(value / 100 ))
-      console.log({ nilai })
-      setFormsInput((prev) => {
-        return {
-          ...prev,
-          [entity]: {
-            ...prev[entity],
-            value
-          },
-          selling_price: {
-            ...prev.selling_price,
-            value: nilai
+            value: String(sellingPrice)
           }
         }
       })
@@ -252,8 +320,34 @@ export default function ProductPage() {
     }
   }
 
-  const updateProductHandler = (data) => {
+  const updateProductHandler = (dataRow) => {
     setIsUpdate(true)
+    const findCategory = categories.find(category => category.name === dataRow.category)
+    const category_id = findCategory.category_id
+
+    const findSupplier = allSuppliers.find(supplier => supplier.name === dataRow.supplier)
+    const supplier_id = findSupplier.supplier_id
+
+    const newUpdateData = {
+      ...dataRow,
+      category_id,
+      supplier_id, 
+      sizetype_id: dataRow.sizetype
+    }
+
+    setFormsInput((currentData) => {
+      const updatedInput = {};
+      for (const key in currentData) {
+        if (currentData.hasOwnProperty(key)) {
+          updatedInput[key] = {
+            ...currentData[key],
+            value: newUpdateData[key]
+          };
+        }
+      }
+      return updatedInput;
+    })
+    setOpenModalForm(true)
   }
 
   return (
@@ -268,12 +362,14 @@ export default function ProductPage() {
           Product
         </Button>
         <ModalForm
-          open={open}
+          open={openModalForm}
           onClose={handleClose}
-          title="Create new Product"
+          title={isUpdate ? "Update Product" : "Create new Product"}
           formsInput={Object.values(formsInput)}
           onChange={changeValueHandler}
           onSubmit={handleSubmit}
+          onSubmit={isUpdate ? handleUpdate : handleSubmit}
+          isUpdate={isUpdate}
         />
         <ModalConfirmation
           open={isOpenModalConfirmation}
